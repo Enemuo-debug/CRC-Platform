@@ -12,6 +12,9 @@ class WebhookController {
       }
 
       const signature = req.headers["x-paystack-signature"] as string;
+
+      console.log("Paystack Webhook Signature:", signature);
+
       if (!signature) {
         return res.status(400).send("Missing signature");
       }
@@ -22,6 +25,8 @@ class WebhookController {
         .createHmac("sha512", secret)
         .update(rawBody)
         .digest("hex");
+
+    console.log("Computed Hash: ", hash === signature ? "matches" : "does not match");
 
       if (hash !== signature) {
         console.warn("Invalid Paystack signature");

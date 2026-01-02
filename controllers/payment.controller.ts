@@ -10,7 +10,7 @@ export class PaymentController {
 
   async initPaystack(req: Request, res: Response) {
     try {
-        const { email, amount } = req.body;
+        const { email, amount, phone } = req.body;
 
         console.log("Initializing Paystack payment...");
 
@@ -19,9 +19,7 @@ export class PaymentController {
         {
             email,
             amount: amount * 100,
-            metadata: {
-                phoneNumber: req.body.phoneNumber
-            }
+            metadata: { phone } // phone should go inside metadata
         },
         {
             headers: {
