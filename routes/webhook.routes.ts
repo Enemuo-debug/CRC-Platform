@@ -7,6 +7,7 @@ router.post(
   "/paystack",
   express.raw({ type: "application/json" }),
   (req, res) => {
+    console.log("Received Paystack webhook:", req.body);
     WebhookController.handlePaystack(req, res);
   }
 );

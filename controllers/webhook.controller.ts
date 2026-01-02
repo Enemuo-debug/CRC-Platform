@@ -4,8 +4,6 @@ import Member from "../models/Induvidual.js";
 
 class WebhookController {
   async handlePaystack(req: Request, res: Response) {
-    console.log("Received Paystack webhook");
-
     try {
       const secret = process.env.PAYSTACK_SECRET_KEY;
       if (!secret) {
