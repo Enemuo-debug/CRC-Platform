@@ -9,30 +9,38 @@ import type { Request, Response } from "express";
 export class PaymentController {
 
   async initPaystack(req: Request, res: Response) {
-    const { email, amount } = req.body;
+    try {
+        const { email, amount } = req.body;
 
-    console.log("Initializing Paystack payment...");
+        console.log("Initializing Paystack payment...");
 
-    const response = await axios.post(
-      "https://api.paystack.co/transaction/initialize",
-      {
-        email,
-        amount: amount * 100,
-        metadata: {
-          phoneNumber: req.body.phoneNumber
+        const response = await axios.post(
+        "https://api.paystack.co/transaction/initialize",
+        {
+            email,
+            amount: amount * 100,
+            metadata: {
+                phoneNumber: req.body.phoneNumber
+            }
         },
-        callback_url: "google.com" // to be replaced with actual URL
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-          "Content-Type": "application/json"
+        {
+            headers: {
+            Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+            "Content-Type": "application/json"
+            }
         }
-      }
-    );
+        );
 
-    return res.json(response.data);
-  }
+        return res.json(response.data);
+
+    } catch (error: any) {
+        console.error("Paystack error:", error.response?.data || error.message);
+        return res.status(500).json({
+        message: "Paystack initialization failed",
+        error: error.response?.data
+        });
+    }
+    }
 
 //   async initStripe(req: Request, res: Response) {
 //     const { amount } = req.body;
