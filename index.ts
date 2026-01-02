@@ -22,7 +22,7 @@ mongoose.connect(dbConnectionString).then(()=>{
 const app:Express = express();
 
 app.use(
-  "/webhook",
+  "/api/v1/webhook",
   express.raw({ type: "application/json" }),
   webhookRoutes
 );
