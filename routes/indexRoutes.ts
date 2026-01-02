@@ -8,7 +8,7 @@ const router: Router = Router();
 
 router.use("/auth", authRoutes);
 router.use("/payment", payRoutes);
-router.use("/webhook", webhookRoutes);
+// router.use("/webhook", webhookRoutes);
 router.use("/member", memberRoutes);
 
 export default router;

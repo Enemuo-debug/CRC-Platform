@@ -5,6 +5,7 @@ import type { OutputMsg } from "./dtos/OutputMessage.js";
 import mainRouter from "./routes/indexRoutes.js";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
+import webhookRoutes from "./routes/webhook.routes.js";
 
 config();
 
@@ -19,6 +20,12 @@ mongoose.connect(dbConnectionString).then(()=>{
 });
 
 const app:Express = express();
+
+app.use(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  webhookRoutes
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
