@@ -4,6 +4,7 @@ import Member from "../models/Induvidual.js";
 
 class WebhookController {
   async handlePaystack(req: Request, res: Response) {
+    console.log("Received Paystack webhook");
     try {
       const signature = req.headers["x-paystack-signature"] as string | undefined;
       const secret = process.env.PAYSTACK_SECRET_KEY;
