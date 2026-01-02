@@ -7,37 +7,39 @@ import type { Request, Response } from "express";
 // });
 
 export class PaymentController {
+    async initPaystack(req: Request, res: Response) {
+        try {
+            const { email, amount, phone } = req.body;
 
-  async initPaystack(req: Request, res: Response) {
-    try {
-        const { email, amount, phone } = req.body;
+            console.log("Initializing Paystack payment...");
 
-        console.log("Initializing Paystack payment...");
+            const response = await axios.post(
+                "https://api.paystack.co/transaction/initialize",
+                {
+                    email,
+                    amount: amount * 100,
+                    metadata: { 
+                        phone: phone,           // For webhook lookup
+                        PhoneNumber: phone      // Backup field name
+                    }
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
 
-        const response = await axios.post(
-        "https://api.paystack.co/transaction/initialize",
-        {
-            email,
-            amount: amount * 100,
-            metadata: { phone } // phone should go inside metadata
-        },
-        {
-            headers: {
-            Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-            "Content-Type": "application/json"
-            }
+            return res.json(response.data);
+
+        } catch (error: any) {
+            console.error("Paystack error:", error.response?.data || error.message);
+            return res.status(500).json({
+                message: "Paystack initialization failed",
+                error: error.response?.data
+            });
         }
-        );
-
-        return res.json(response.data);
-
-    } catch (error: any) {
-        console.error("Paystack error:", error.response?.data || error.message);
-        return res.status(500).json({
-        message: "Paystack initialization failed",
-        error: error.response?.data
-        });
-    }
     }
 
 //   async initStripe(req: Request, res: Response) {
