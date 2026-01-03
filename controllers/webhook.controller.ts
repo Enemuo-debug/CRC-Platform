@@ -5,6 +5,7 @@ import Member from "../models/Induvidual.js";
 class WebhookController {
     async handlePaystack(req: Request, res: Response) {
         try {
+            console.log("Received Paystack webhook");
             const secret = process.env.PAYSTACK_SECRET_KEY;
             
             // Debug: Check secret key
@@ -82,32 +83,32 @@ class WebhookController {
             
             console.log("Full metadata:", JSON.stringify(metadata, null, 2));
             
-            // Extract phone number (checking all possible field names)
-            const phone = metadata.phone || metadata.PhoneNumber || metadata.phoneNumber;
+            // Extract memberId number (checking all possible field names)
+            const memberId = metadata.memberId;
 
-            console.log("Extracted phone from metadata:", phone);
+            console.log("Extracted memberId from metadata:", memberId);
 
-            if (!phone) {
-                console.error("❌ No phone number in metadata:", metadata);
-                return res.status(400).send("Phone number required");
+            if (!memberId) {
+                console.error("❌ No Id number in metadata:", metadata);
+                return res.status(400).send("memberId number required");
             }
 
-            // Update member by phone number
-            console.log("Searching for member with PhoneNumber:", phone);
+            // Update member by memberId number
+            console.log("Searching for member with memberId:", memberId);
             
             const updated = await Member.findOneAndUpdate(
-                { PhoneNumber: phone },
+                { _id: memberId },
                 { Expired: false },
                 { new: true }
             );
 
             if (!updated) {
-                console.warn("⚠️ Payment confirmed but no member found with phone:", phone);
-                console.warn("Check if phone format matches your database");
+                console.warn("⚠️ Payment confirmed but no member found with memberId:", memberId);
+                console.warn("Check if memberId format matches your database");
                 return res.status(200).send("Member not found");
             }
 
-            console.log("✅ Payment confirmed for member:", updated._id, "Phone:", phone);
+            console.log("✅ Payment confirmed for member:", updated._id, "memberId:", memberId);
             return res.status(200).send("Success");
 
         } catch (error: any) {

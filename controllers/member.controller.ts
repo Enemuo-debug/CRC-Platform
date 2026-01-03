@@ -1,11 +1,13 @@
 import type { IMemberCreate } from "../dtos/ADMINLogIn.js";
 import type { IUser } from "../dtos/CreateUser.js";
-import type { Request, Response } from "express";
+import { MaritalStates, Gender } from "../dtos/CreateUser.js";
+import type { NextFunction, Request, Response } from "express";
 import type { OutputMsg } from "../dtos/OutputMessage.js";
 import Member from "../models/Induvidual.js";
+import { calculatePrice } from "../utils/calculate-price.js";
 
 class MemberController {
-    async RegisterMember(req: Request<{}, {}, IMemberCreate>, res: Response): Promise<void> {
+    async RegisterMember(req: Request<{}, {}, IMemberCreate>, res: Response, next: NextFunction): Promise<void> {
         const newMember: IUser = {
             FirstName: req.body.FirstName,
             LastName: req.body.LastName,
@@ -21,13 +23,11 @@ class MemberController {
         }
         
         Member.create(newMember).then((member) => {
-            const output: OutputMsg = {
-                success: true,
-                message: "Member registered successfully",
-                data: newMember,
-                statusCode: 201
+            req.member = {
+                _id: member._id,
+                price: calculatePrice(MaritalStates[member.MaritalStatus as keyof typeof MaritalStates], Gender[member.Sex as keyof typeof Gender])
             };
-            res.status(output.statusCode).json(output);
+            next();
         }).catch((error) => {
             const output: OutputMsg = {
                 success: false,
