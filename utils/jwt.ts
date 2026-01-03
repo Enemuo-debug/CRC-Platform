@@ -17,5 +17,8 @@ export function signToken(payload: LoginDto) {
 }
 
 export function verifyToken(token: string): LoginDto {
+  if (!token) {
+    return null as unknown as LoginDto;
+  }
   return jwt.verify(token, JWT_SECRET) as LoginDto;
 }

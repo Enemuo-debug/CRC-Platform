@@ -11,8 +11,8 @@ router.post("/", (req: Request<LoginDto>, res: Response<OutputMsg>) => {
     AdminController.authenticate(req, res);
 })
 
-router.post("/", (req: Request<IZone>, res: Response<OutputMsg>) => {
-    AdminController.authenticate(req, res);
+router.post("/create-zone", (req: Request<IZone>, res: Response<OutputMsg>) => {
+    AdminController.createZone(req, res);
 })
 
 export default router;

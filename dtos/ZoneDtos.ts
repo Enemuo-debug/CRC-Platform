@@ -1,4 +1,6 @@
+import type mongoose from "mongoose";
+
 export interface IZone {
     ZoneName: String,
-    ZoneLeader: String
+    ZoneLeader: mongoose.Types.ObjectId
 }
