@@ -6,6 +6,7 @@ import type { OutputMsg } from "../dtos/OutputMessage.js";
 import Member from "../models/Induvidual.js";
 import { calculatePrice } from "../utils/calculate-price.js";
 import mongoose from "mongoose";
+import Zone from "../models/Zones.js";
 
 class MemberController {
     async RegisterMember(req: Request<{}, {}, IMemberCreate>, res: Response, next: NextFunction): Promise<void> {
@@ -40,8 +41,23 @@ class MemberController {
         });
     }
 
-    async f() {
-        return null;
+    async GetAllZonesEndpoint(req: Request, res: Response<OutputMsg>): Promise<void> {
+        try {
+            const zones = await Zone.find().sort({ ZoneName: 1 });
+            res.status(200).json({
+                success: true,
+                message: "Zones fetched successfully",
+                data: zones,
+                statusCode: 200
+            } as OutputMsg);
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: "Server Error...",
+                data: error,
+                statusCode: 500
+            } as OutputMsg);
+        }
     }
 }
 

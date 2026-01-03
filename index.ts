@@ -6,6 +6,7 @@ import mainRouter from "./routes/indexRoutes.js";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import webhookRoutes from "./routes/webhook.routes.js";
+import cors from "cors";
 
 config();
 
@@ -26,6 +27,16 @@ app.use(
   express.raw({ type: "application/json" }),
   webhookRoutes
 );
+
+if (process.env.NODE_ENV === "production") {
+    app.use(cors({
+        origin: process.env.FRONTEND_URL,
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true
+    }));
+} else {
+    app.use(cors());
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
