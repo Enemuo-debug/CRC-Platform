@@ -5,6 +5,7 @@ import type { NextFunction, Request, Response } from "express";
 import type { OutputMsg } from "../dtos/OutputMessage.js";
 import Member from "../models/Induvidual.js";
 import { calculatePrice } from "../utils/calculate-price.js";
+import mongoose from "mongoose";
 
 class MemberController {
     async RegisterMember(req: Request<{}, {}, IMemberCreate>, res: Response, next: NextFunction): Promise<void> {
@@ -12,7 +13,7 @@ class MemberController {
             FirstName: req.body.FirstName,
             LastName: req.body.LastName,
             MiddleName: req.body.MiddleName,
-            Zone: req.body.Zone,
+            Zone: req.body.Zone as mongoose.Types.ObjectId,
             MaritalStatus: req.body.MaritalStatus,
             Sex: req.body.Sex,
             Address: req.body.Address,
@@ -37,6 +38,10 @@ class MemberController {
             }
             res.status(output.statusCode).json(output);
         });
+    }
+
+    async f() {
+        return null;
     }
 }
 

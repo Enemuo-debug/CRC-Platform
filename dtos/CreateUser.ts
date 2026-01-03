@@ -1,13 +1,15 @@
+import type mongoose from "mongoose";
+
 export interface IUser {
-    FirstName: String,
-    MiddleName: String,
-    LastName: String,
-    Zone: String,
-    MaritalStatus: String,
-    Sex: String,
-    Address: String,
+    FirstName: string,
+    MiddleName: string,
+    LastName: string,
+    Zone: mongoose.Types.ObjectId,
+    MaritalStatus: string,
+    Sex: string,
+    Address: string,
     Age: Number,
-    PhoneNumber: String,
+    PhoneNumber: string,
     CreatedAt: Date,
     Expired: Boolean
 }

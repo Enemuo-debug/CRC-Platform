@@ -40,14 +40,23 @@ class AdminControllers {
             } as OutputMsg);
         }
 
-        const zone = Zone.create(req.body);
-
-        const output: OutputMsg = {
-            statusCode: 201,
-            success: true,
-            message: "Zone created successfully",
-            data: zone
-        };
+        Zone.create(req.body).then((zone) => {
+            const output: OutputMsg = {
+                statusCode: 201,
+                success: true,
+                message: "Zone created successfully",
+                data: zone
+            };
+            return res.status(output.statusCode).json(output);
+        }).catch((error) => {
+            const output: OutputMsg = {
+                statusCode: 500,
+                success: false,
+                message: "Server Error...",
+                data: error
+            };
+            return res.status(output.statusCode).json(output);
+        });
     }
 }
 

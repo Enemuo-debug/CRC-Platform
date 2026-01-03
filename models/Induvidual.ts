@@ -28,11 +28,12 @@ const MemberSchema = new Schema<IUser>(
     PhoneNumber: {
       type: String,
       unique: true,
-      required: true,
+      required: true
     },
 
     Zone: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Zones",
       required: true,
       trim: true,
     },
