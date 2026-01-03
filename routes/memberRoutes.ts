@@ -15,4 +15,8 @@ router.post("/newMember", validate(createUserSchema), validateZoneExists, (req: 
     PaymentController.initPaystack(req, res);
 });
 
+router.get("/zones", (req: Request, res: Response<OutputMsg>) => {
+    MemberController.GetAllZonesEndpoint(req, res);
+});
+
 export default router;
