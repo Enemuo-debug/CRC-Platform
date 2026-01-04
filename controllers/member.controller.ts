@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 import Zone from "../models/Zones.js";
 
 class MemberController {
-    async RegisterMember(req: Request<{}, {}, IMemberCreate>, res: Response, next: NextFunction): Promise<void> {
+    async RegisterMember(req: Request<{}, {}, IMemberCreate>, res: Response, next: NextFunction): Promise<void | Response<OutputMsg>> {
         const newMember: IUser = {
             FirstName: req.body.FirstName,
             LastName: req.body.LastName,
@@ -20,16 +20,44 @@ class MemberController {
             Address: req.body.Address,
             Age: req.body.Age,
             PhoneNumber: req.body.PhoneNumber,
-            CreatedAt: new Date(),
+            createdAt: new Date(),
             Expired: true
         }
-        
+
+        const existingMember: IUser | null = await Member.findOne({ PhoneNumber: newMember.PhoneNumber });
+        const existingMemberNames: IUser | null = await Member.findOne({ FirstName: newMember.FirstName, LastName: newMember.LastName, MiddleName: newMember.MiddleName });
+        if (existingMember) {
+            const output: OutputMsg = {
+                success: false,
+                message: "Member with this phone number already exists",
+                data: null,
+                statusCode: 409
+            };
+            return res.status(output.statusCode).json(output);
+        }
+
+        if (existingMemberNames) {
+            const output: OutputMsg = {
+                success: false,
+                message: "Member with these names already exists",
+                data: null,
+                statusCode: 409
+            };
+            return res.status(output.statusCode).json(output);
+        }
+
+        const unPaidMembers = await Member.find({ Expired: true, isNew: true, createdAt: { $lt: new Date(new Date().getTime() - 1*60*60*1000) } });
+
+        Member.deleteMany({ _id: { $in: unPaidMembers.map(member => member._id) } }).catch((error) => {
+            console.error("Error deleting unPaidMembers: ", error);
+        });
+
         Member.create(newMember).then((member) => {
             req.member = {
                 _id: member._id,
                 price: calculatePrice(MaritalStates[member.MaritalStatus as keyof typeof MaritalStates], Gender[member.Sex as keyof typeof Gender])
             };
-            next();
+            return next();
         }).catch((error) => {
             const output: OutputMsg = {
                 success: false,
@@ -37,21 +65,21 @@ class MemberController {
                 data: error,
                 statusCode: 500
             }
-            res.status(output.statusCode).json(output);
+            return res.status(output.statusCode).json(output);
         });
     }
 
-    async GetAllZonesEndpoint(req: Request, res: Response<OutputMsg>): Promise<void> {
+    async GetAllZonesEndpoint(req: Request, res: Response<OutputMsg>): Promise<Response<OutputMsg>> {
         try {
             const zones = await Zone.find().sort({ ZoneName: 1 });
-            res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 message: "Zones fetched successfully",
                 data: zones,
                 statusCode: 200
             } as OutputMsg);
         } catch (error) {
-            res.status(500).json({
+            return res.status(500).json({
                 success: false,
                 message: "Server Error...",
                 data: error,

@@ -22,12 +22,6 @@ mongoose.connect(dbConnectionString).then(()=>{
 
 const app:Express = express();
 
-app.use(
-  "/api/v1/webhook",
-  express.raw({ type: "application/json" }),
-  webhookRoutes
-);
-
 if (process.env.NODE_ENV === "production") {
     app.use(cors({
         origin: process.env.FRONTEND_URL,
@@ -37,6 +31,13 @@ if (process.env.NODE_ENV === "production") {
 } else {
     app.use(cors());
 }
+
+app.use(
+  "/api/v1/webhook",
+  express.raw({ type: "application/json" }),
+  webhookRoutes
+);
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

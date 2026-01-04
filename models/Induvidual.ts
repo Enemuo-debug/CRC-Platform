@@ -65,6 +65,11 @@ const MemberSchema = new Schema<IUser>(
       type: Boolean,
       default: true,
     },
+
+    isNewMember: {
+      type: Boolean,
+      default: true,
+    }
   },
   {
     timestamps: true,

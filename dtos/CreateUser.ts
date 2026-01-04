@@ -10,8 +10,9 @@ export interface IUser {
     Address: string,
     Age: Number,
     PhoneNumber: string,
-    CreatedAt: Date,
-    Expired: Boolean
+    createdAt: Date,
+    Expired: boolean,
+    isNewMember?: boolean
 }
 
 export enum MaritalStates {

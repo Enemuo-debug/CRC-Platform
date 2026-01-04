@@ -98,7 +98,7 @@ class WebhookController {
             
             const updated = await Member.findOneAndUpdate(
                 { _id: memberId },
-                { Expired: false },
+                { Expired: false, isNew: false },
                 { new: true }
             );
 

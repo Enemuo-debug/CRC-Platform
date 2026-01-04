@@ -5,16 +5,10 @@ import Memeber from "./Induvidual.js";
 const ZoneSchema = new Schema<IZone>(
   {
     ZoneName: {
-        type: String,
-        trim: true,
-        unique: true,
-        required: true
-    },
-    ZoneLeader: {
-        type: Schema.Types.ObjectId,
-        ref: Memeber,
-        unique: true,
-        required: true
+      type: String,
+      trim: true,
+      unique: true,
+      required: true
     }
   }
 );
